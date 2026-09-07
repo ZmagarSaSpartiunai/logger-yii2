@@ -1,0 +1,57 @@
+# Select the "local" environment in the run gutter, or {{host}} stays unsubstituted.
+# local  = php -S 0.0.0.0:8001 -t web web/index.php
+# docker = docker compose up (:8000)
+
+### Default channel -> 202
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{
+  "message": "Sending by default channel."
+}
+
+### One explicit channel -> 202
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{
+  "message": "Sending by file channel.",
+  "channels": ["file"],
+  "level": "warning"
+}
+
+### A subset of channels -> 202
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{
+  "message": "Email and database, but not file.",
+  "channels": ["email", "database"]
+}
+
+### Every configured channel -> 202 all delivered, 207 partial, 502 none
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{
+  "message": "Sending everywhere.",
+  "channels": ["*"]
+}
+
+### Unknown channel -> 422
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{
+  "message": "Sending nowhere.",
+  "channels": ["carrier-pigeon"]
+}
+
+### Missing message -> 422
+POST {{host}}/api/logs
+Content-Type: application/json
+
+{}
+
+### Wrong method -> 405 with an Allow header
+GET {{host}}/api/logs

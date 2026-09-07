@@ -5,6 +5,12 @@ parameters:
         - assets
         - commands
         - controllers
+        - enums
+        - exceptions
+        - forms
+        - interfaces
+        - services
+        - support
         - mail
         - models
         - widgets
